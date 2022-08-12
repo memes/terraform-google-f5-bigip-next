@@ -1,7 +1,40 @@
-# Ignore my direnv setup
+# Ignore direnv setup
 .envrc
 .direnv
 .tool-versions
 
-# Ignore generated binaries in dist
-dist/
+# Ignore Terraform plugin/module cache and local state files
+.terraform
+.terraform.lock.hcl
+
+# .tfstate files
+*.tfstate
+*.tfstate.*
+
+# Crash log files
+crash.log
+
+# Ignore override files as they are usually used to override resources locally and so
+# are not checked in
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# Don't include any local automatic variable assignment files
+terraform.tfvars
+terraform.tfvars.json
+*.auto.tfvars
+*.auto.tfvars.json
+
+# Ignore Gem lock and local bundle config
+.bundle
+Gemfile.lock
+
+# kitchen-terraform and test results
+test/ephemeral
+test/reports/*
+!test/reports/.gitkeep
+test/setup/*-ssh*
+test/setup/harness.tfvars
+.kitchen
