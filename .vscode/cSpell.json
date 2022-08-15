@@ -3,23 +3,18 @@
     "version": "0.2",
     "language": "en",
     "words": [
-        "yamllint",
-        "markdownlint",
-        "goreleaser",
-        "hadolint",
+        "chdir",
+        "dotenvrc",
         "fileignoreconfig",
-        "venv",
-        "pastebin",
+        "gmake",
+        "Pastebin",
+        "privkey",
+        "pubkeys",
+        "strftime",
+        "tfvars",
         "thumbsup",
-        "golangci",
-        "hashicorp",
-        "DOCKERHUB",
-        "workdir",
-        "trimpath",
-        "ldflags",
-        "incpatch",
-        "opencontainers",
-        "goarch"
+        "udata",
+        "wontfix"
     ],
     "flagWords": [
         "hte"

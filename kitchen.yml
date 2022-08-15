@@ -1,0 +1,172 @@
+# yamllint disable
+# spell-checker: disable
+<%
+require 'open3'
+require 'json'
+
+report_dir = ENV['REPORT_DIR'] || 'test/reports'
+report_ts = ENV['REPORT_TS'] || Time.now.strftime('%Y-%m-%d-%H-%M-%S')
+tf_output, rc = Open3.capture2('terraform -chdir=test/setup output -json')
+if rc != 0
+  abort 'Failed to capture Terraform output from test/setup'
+end
+harness_outputs = JSON.parse(tf_output).map { |k,v| [k, v['value']] }.to_h
+%>
+---
+driver:
+  name: terraform
+  command_timeout: 300
+  verify_version: false
+  variables:
+    image: projects/f5-gcs-4138-sales-cloud-sales/global/images/family/big-ip-next-2022-06
+    # image: projects/f5-gcs-4138-sales-cloud-sales/global/images/big-ip-next-rel-2022-06-30-patched
+  variable_files:
+    - <%= harness_outputs['harness_tfvars'] %>
+
+provisioner:
+  name: terraform
+
+verifier:
+  name: terraform
+  color: true
+
+platforms:
+  - name: local
+
+suites:
+  # NOTE: this test relies on implicit SSH key processing via cloud-init, since
+  # an explicit key is not added to VM metadata. A suitable SSH public key must
+  # already be in project metadata, configured for ubuntu user, and loaded into
+  # ssh-agent (or equivalent).
+  - name: ex-ve-ea-std
+    driver:
+      root_module_directory: test/fixtures/examples/ve-ea-standalone
+      variables:
+        test_prefix: ex-ve-ea-std
+    verifier:
+      systems:
+        - name: compute-engine
+          backend: gcp
+          profile_locations:
+            - test/profiles/gce
+          reporter:
+            - cli
+            - documentation:<%= report_dir %>/<%= report_ts %>/ex-ve-ea-std-compute-engine.txt
+        - name: remote
+          backend: ssh
+          hosts_output: cp_public_addresses
+          user: ubuntu
+          profile_locations:
+            - test/profiles/remote
+          reporter:
+            - cli
+            - documentation:<%= report_dir %>/<%= report_ts %>/ex-ve-ea-std-remote.txt
+  # NOTE: this test relies on implicit SSH key processing via cloud-init, since
+  # an explicit key is not added to VM metadata. A suitable SSH public key must
+  # already be in project metadata, configured for ubuntu user, and loaded into
+  # ssh-agent (or equivalent).
+  - name: ex-ve-ea-ha-cm
+    driver:
+      root_module_directory: test/fixtures/examples/ve-ea-ha-cm
+      variables:
+        test_prefix: ex-ve-ea-ha-cm
+        bigip_cm_sa: <%= harness_outputs['bigip_cm_sa'] %>
+        cm_image: projects/f5-gcs-4138-sales-cloud-sales/global/images/big-ip-next-centralmanager-k3s-2022-06-0-6-0-0-6-7-custom
+    verifier:
+      systems:
+        - name: compute-engine
+          backend: gcp
+          profile_locations:
+            - test/profiles/gce
+          reporter:
+            - cli
+            - documentation:<%= report_dir %>/<%= report_ts %>/ex-ve-ea-ha-cm-compute-engine.txt
+        - name: remote
+          backend: ssh
+          hosts_output: cp_public_addresses
+          user: ubuntu
+          profile_locations:
+            - test/profiles/remote
+          reporter:
+            - cli
+            - documentation:<%= report_dir %>/<%= report_ts %>/ex-ve-ea-ha-cm-remote.txt
+  # NOTE: this test relies on implicit SSH key processing via cloud-init, since
+  # an explicit key is not added to VM metadata. A suitable SSH public key must
+  # already be in project metadata, configured for ubuntu user, and loaded into
+  # ssh-agent (or equivalent).
+  - name: root
+    driver:
+      root_module_directory: test/fixtures/root
+      variables:
+        test_prefix: root
+    verifier:
+      systems:
+        - name: compute-engine
+          backend: gcp
+          profile_locations:
+            - test/profiles/gce
+          reporter:
+            - cli
+            - documentation:<%= report_dir %>/<%= report_ts %>/root-compute-engine.txt
+        - name: remote
+          backend: ssh
+          hosts_output: cp_public_addresses
+          user: ubuntu
+          profile_locations:
+            - test/profiles/remote
+          reporter:
+            - cli
+            - documentation:<%= report_dir %>/<%= report_ts %>/root-remote.txt
+  - name: root-vm-ssh
+    driver:
+      root_module_directory: test/fixtures/root
+      variables:
+        test_prefix: root-vm-ssh
+        metadata: '{ssh-keys=\"<%= harness_outputs['ssh_pubkeys'].map{ |k| 'ubuntu:' + k }.join('\\n') %>\"}'
+    verifier:
+      systems:
+        - name: compute-engine
+          backend: gcp
+          profile_locations:
+            - test/profiles/gce
+          reporter:
+            - cli
+            - documentation:<%= report_dir %>/<%= report_ts %>/root-vm-ssh-compute-engine.txt
+        - name: remote
+          backend: ssh
+          hosts_output: cp_public_addresses
+          key_files:
+            - <%= harness_outputs['ssh_privkey_path'] %>
+          user: ubuntu
+          profile_locations:
+            - test/profiles/remote
+          reporter:
+            - cli
+            - documentation:<%= report_dir %>/<%= report_ts %>/root-vm-ssh-remote.txt
+  - name: root-ssh-udata
+    driver:
+      root_module_directory: test/fixtures/root
+      variables:
+        test_prefix: root-ssh-udata
+        verify_files: '[\"/run/kitchen-test\"]'
+        metadata: '{ssh-keys=\"<%= harness_outputs['ssh_pubkeys'].map{ |k| 'ubuntu:' + k }.join('\\n') %>\",user-data=\"#cloud-config\nwrite_files:\n  - path: /run/kitchen-test\n    content: This is a test file\"}'
+    verifier:
+      systems:
+        - name: compute-engine
+          backend: gcp
+          profile_locations:
+            - test/profiles/gce
+          reporter:
+            - cli
+            - documentation:<%= report_dir %>/<%= report_ts %>/root-ssh-udata-compute-engine.txt
+        - name: remote
+          backend: ssh
+          hosts_output: cp_public_addresses
+          key_files:
+            - <%= harness_outputs['ssh_privkey_path'] %>
+          user: ubuntu
+          profile_locations:
+            - test/profiles/remote
+          reporter:
+            - cli
+            - documentation:<%= report_dir %>/<%= report_ts %>/root-ssh-udata-remote.txt

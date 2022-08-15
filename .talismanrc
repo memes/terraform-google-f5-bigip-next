@@ -6,3 +6,11 @@ fileignoreconfig:
   checksum: 1a73442a316535a2e8a67a401aef15943f73ab0e405577f6f405e81400a12d57
 - filename: .github/workflows/pre-commit.yml
   checksum: d973823a6d233c44075ad96c2f92e2d2522b3c5767ef6e8376f0731e8a55ab38
+- filename: test/setup/main.tf
+  checksum: 1e96a36eb18fdd751f1dbefce9ca668e2af6021df563f82386122d24b64ba602
+- filename: modules/builder/variables.tf
+  checksum: f0e752d8fc60b23f82004cafc226274cd713a5000b22ef1174a42ccb28d546ee
+- filename: kitchen.yml
+  checksum: 84727ee7026b9c7b984bbb9de08f99953df78eb9fc58e8f80e23adbade3c218a
+- filename: test/setup/README.md
+  checksum: d3fb1fbe89736c00f8529c2d5140d4551edfd154fcb6582e6d88f876eefacf2b

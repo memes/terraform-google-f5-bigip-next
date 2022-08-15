@@ -1,0 +1,16 @@
+---
+name: gce
+title: BIG-IP Next Google Compute Engine verification
+maintainer: Matthew Emes <m.emes@f5.com>
+license: Apache-2.0
+version: 0.0.1
+supports:
+  - platform: gcp
+depends:
+  - name: inspec-gcp
+    git: https://github.com/inspec/inspec-gcp.git
+    tag: v1.10.37
+inputs:
+  - name: output_self_links
+    type: array
+    required: true

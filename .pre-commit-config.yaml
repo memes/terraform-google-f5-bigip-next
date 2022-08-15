@@ -8,6 +8,7 @@ repos:
       - id: yamllint
         files: \.(yml|yaml|talismanrc)$
         types: [file, yaml]
+        exclude: kitchen\.ya?ml$
         entry: yamllint --strict
   - repo: https://github.com/antonbabenko/pre-commit-terraform
     rev: v1.74.1

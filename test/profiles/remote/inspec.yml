@@ -1,0 +1,12 @@
+---
+name: remote
+title: Remote access via SSH public key
+maintainer: Matthew Emes <m.emes@f5.com>
+license: Apache-2.0
+version: 0.0.1
+supports:
+  platform: os
+inputs:
+  - name: input_verify_files
+    type: string
+    required: false

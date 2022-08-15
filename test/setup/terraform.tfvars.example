@@ -1,0 +1,15 @@
+# The GCP project identifier to use
+project_id  = "my-gcp-project"
+
+# The single Compute Engine region where the resources will be created
+region = "us-west1"
+
+# Optional labels to add to resources
+labels = {
+    "owner" = "tester-name"
+}
+
+# Any additional SSH public keys to add when setting through per-VM metadata
+ssh_keys = [
+    "ssh-rsa AAAA.... user@example.com",
+]
