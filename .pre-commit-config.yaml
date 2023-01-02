@@ -3,7 +3,7 @@
 # spell-checker:disable
 repos:
   - repo: https://github.com/adrienverge/yamllint
-    rev: v1.27.1
+    rev: v1.28.0
     hooks:
       - id: yamllint
         files: \.(yml|yaml|talismanrc)$
@@ -11,17 +11,17 @@ repos:
         exclude: kitchen\.ya?ml$
         entry: yamllint --strict
   - repo: https://github.com/antonbabenko/pre-commit-terraform
-    rev: v1.74.1
+    rev: v1.77.0
     hooks:
       - id: terraform_fmt
       - id: terraform_docs
         args: ['--args=--sort-by=required --hide=providers']
   - repo: https://github.com/shellcheck-py/shellcheck-py
-    rev: v0.8.0.4
+    rev: v0.9.0.2
     hooks:
       - id: shellcheck
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.3.0
+    rev: v4.4.0
     hooks:
       - id: check-executables-have-shebangs
       - id: check-merge-conflict
@@ -29,6 +29,6 @@ repos:
       - id: end-of-file-fixer
       - id: trailing-whitespace
   - repo: https://github.com/thoughtworks/talisman
-    rev: v1.28.1
+    rev: v1.29.4
     hooks:
       - id: talisman-commit
